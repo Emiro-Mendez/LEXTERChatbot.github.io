@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chatbot LEXTER para practicar inglés con el verbo to be">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src https: data:;">
+    <link rel="icon" type="image/jpeg" href="https://img.freepik.com/vector-gratis/arte-vectorial-robots-estilo-dibujos-animados_78370-4103.jpg?semt=ais_hybrid&w=740&q=80">
+    <title>LEXTER CHATBOT - Aprende el verbo To Be</title>
+    <style>
+        :root {
+            --primary-color: #FFBC4C;
+            --secondary-color: #4f505c;
+            --accent-color: #4e54c8;
+            --tutorial-color: #9c27b0;
+            --background-gradient: linear-gradient(135deg, #74ebd5, #9face6);
+            --bot-message-bg: #f1f0f0;
+            --user-message-bg: #4f505c;
+            --user-message-color: #fff;
+            --chat-container-bg: #fff;
+            --suggestion-color: #666;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --warning-color: #ff9800;
+            --info-color: #2196f3;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background-gradient);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .header h1 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: var(--suggestion-color);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .tutorial-toggle {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            background: var(--tutorial-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .tutorial-toggle:hover {
+            background: #7b1fa2;
+            transform: scale(1.05);
+        }
+        
+        .content-wrapper {
+            display: flex;
+            gap: 20px;
+            flex-direction: column;
+        }
+        
+        @media (min-width: 768px) {
+            .content-wrapper {
+                flex-direction: row;
+            }
+        }
+        
+        .grammar-guide {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .grammar-guide h2 {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .grammar-section {
+            margin-bottom: 20px;
+        }
+        
+        .grammar-section h3 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        .example {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 8px 0;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .correct {
+            color: var(--correct-color);
+            font-weight: bold;
+        }
+        
+        .incorrect {
+            color: var(--incorrect-color);
+            text-decoration: line-through;
+        }
+        
+        .chat-container {
+            width: 100%;
+            max-width: 400px;
+            height: 600px;
+            background: var(--chat-container-bg);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .tutorial-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .tutorial-content {
+            background: white;
+            color: #333;
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 350px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .tutorial-content h3 {
+            color: var(--tutorial-color);
+            margin-bottom: 15px;
+        }
+        
+        .tutorial-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .tutorial-btn {
+            background: var(--tutorial-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .tutorial-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .tutorial-progress {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+            margin: 0 5px;
+        }
+        
+        .progress-dot.active {
+            background: var(--tutorial-color);
+        }
+        
+        .chat-header {
+            background: var(--primary-color);
+            color: #000000;
+            text-align: center;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .robot-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .exit-info {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 12px;
+            background: rgba(0,0,0,0.1);
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+        
+        .chat-box {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            background: #f9f9f9;
+        }
+        
+        .message {
+            margin: 10px 0;
+            padding: 12px 15px;
+            border-radius: 20px;
+            max-width: 80%;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease-in-out;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .bot {
+            background: var(--bot-message-bg);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .user {
+            background: var(--user-message-bg);
+            color: var(--user-message-color);
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .tutorial-message {
+            background: #e8f5e9;
+            border-left: 4px solid var(--tutorial-color);
+        }
+        
+        .message-time {
+            font-size: 10px;
+            margin-top: 5px;
+            opacity: 0.7;
+            text-align: right;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            border-top: 1px solid #ddd;
+            background: #fff;
+            padding: 10px;
+            align-items: center;
+        }
+        
+        .chat-input {
+            flex: 1;
+            border: 1px solid #ddd;
+            padding: 12px;
+            font-size: 16px;
+            outline: none;
+            border-radius: 20px;
+            margin-right: 10px;
+            transition: border-color 0.3s;
+        }
+        
+        .chat-input:focus {
+            border-color: var(--primary-color);
+        }
+        
+        .send-button {
+            background: var(--primary-color);
+            color: #000000;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .send-button:hover {
+            background: #e6a93c;
+        }
+        
+        .send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(10px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        .suggestion {
+            font-size: 13px;
+            color: var(--suggestion-color);
+            margin-top: 5px;
+            padding-left: 10px;
+        }
+        
+        .suggestion-chip {
+            display: inline-block;
+            background: #e0e0e0;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 5px 5px 0 0;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .suggestion-chip:hover {
+            background: #d0d0d0;
+        }
+        
+        .tutorial-chip {
+            background: var(--tutorial-color);
+            color: white;
+        }
+        
+        .exit-message {
+            background: var(--primary-color) !important;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .typing-indicator {
+            display: flex;
+            padding: 10px;
+            align-items: center;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #888;
+            border-radius: 50%;
+            margin: 0 3px;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+        
+        .warning-message {
+            background: #fff3cd !important;
+            color: #856404 !important;
+            border: 1px solid #ffeaa7;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .info-message {
+            background: #e3f2fd !important;
+            color: #0d47a1 !important;
+            border: 1px solid #bbdefb;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .privacy-notice {
+            font-size: 11px;
+            text-align: center;
+            padding: 10px;
+            color: #666;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background: #f8f8f8;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .help-button {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            background: rgba(0,0,0,0.1);
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .hint-button {
+            background: var(--info-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 480px) {
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            body {
+                padding: 0;
+            }
+            
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            .grammar-guide {
+                max-height: 300px;
+            }
+            
+            .tutorial-content {
+                max-width: 280px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>LEXTER - Aprendiendo el verbo To Be</h1>
+            <p>Practica y mejora tu uso del verbo más importante en inglés con nuestro asistente inteligente</p>
+            <button class="tutorial-toggle" id="tutorialToggle">Iniciar Tutorial</button>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="grammar-guide">
+                <h2>Guía del verbo To Be</h2>
+                
+                <div class="grammar-section">
+                    <h3>Formas del verbo To Be</h3>
+                    <p>El verbo <strong>to be</strong> (ser/estar) es el más importante en inglés y tiene formas diferentes según el sujeto:</p>
+                    
+                    <div class="example">
+                        <p><span class="correct">I am</span> - Yo soy/estoy</p>
+                        <p><span class="correct">You are</span> - Tú eres/estás</p>
+                        <p><span class="correct">He/She/It is</span> - Él/Ella/Eso es/está</p>
+                        <p><span class="correct">We are</span> - Nosotros somos/estamos</p>
+                        <p><span class="correct">They are</span> - Ellos son/están</p>
+                    </div>
+                </div>
+                
+                <div class="grammar-section">
+                    <h3>Contracciones comunes</h3>
+                    <p>En inglés, es común contraer el verbo con el pronombre:</p>
+                    
+                    <div class="example">
+                        <p><span class="correct">I am</span> → <span class="correct">I'm</span></p>
+                        <p><span class="correct">You are</span> → <span class="correct">You're</span></p>
+                        <p><span class="correct">He is</span> → <span class="correct">He's</span></p>
+                        <p><span class="correct">She is</span> → <span class="correct">She's</span></p>
+                        <p><span class="correct">It is</span> → <span class="correct">It's</span></p>
+                        <p><span class="correct">We are</span> → <span class="correct">We're</span></p>
+                        <p><span class="correct">They are</span> → <span class="correct">They're</span></p>
+                    </div>
+                </div>
+                
+                <div class="grammar-section">
+                    <h3>Forma negativa</h3>
+                    <p>Para hacer oraciones negativas, añade "not" después del verbo:</p>
+                    
+                    <div class="example">
+                        <p><span class="correct">I am not</span> - Yo no soy/estoy</p>
+                        <p><span class="correct">You are not</span> - Tú no eres/estás</p>
+                        <p><span class="correct">He is not</span> - Él no es/está</p>
+                        <p><span class="correct">We are not</span> - Nosotros no somos/estamos</p>
+                    </div>
+                    
+                    <p>También puedes usar contracciones en la forma negativa:</p>
+                    
+                    <div class="example">
+                        <p><span class="correct">You aren't</span></p>
+                        <p><span class="correct">He isn't</span></p>
+                        <p><span class="correct">We aren't</span></p>
+                    </div>
+                </div>
+                
+                <div class="grammar-section">
+                    <h3>Forma interrogativa</h3>
+                    <p>Para hacer preguntas, invertimos el orden del verbo y el sujeto:</p>
+                    
+                    <div class="example">
+                        <p><span class="correct">Am I?</span> - ¿Soy/Estoy yo?</p>
+                        <p><span class="correct">Are you?</span> - ¿Eres/Estás tú?</p>
+                        <p><span class="correct">Is he?</span> - ¿Es/Está él?</p>
+                        <p><span class="correct">Are we?</span> - ¿Somos/Estamos nosotros?</p>
+                        <p><span class="correct">Are they?</span> - ¿Son/Están ellos?</p>
+                    </div>
+                </div>
+                
+                <div class="grammar-section">
+                    <h3>Errores comunes</h3>
+                    <p>Evita estos errores frecuentes:</p>
+                    
+                    <div class="example">
+                        <p><span class="incorrect">I am student</span> → <span class="correct">I am a student</span></p>
+                        <p><span class="incorrect">She is doctor</span> → <span class="correct">She is a doctor</span></p>
+                        <p><span class="incorrect">We are happy?</span> → <span class="correct">Are we happy?</span></p>
+                        <p><span class="incorrect">You is my friend</span> → <span class="correct">You are my friend</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-container">
+                <div id="tutorialOverlay" class="tutorial-overlay" style="display: none;">
+                    <div class="tutorial-content">
+                        <h3 id="tutorialTitle">Bienvenido al Tutorial</h3>
+                        <p id="tutorialText">Este tutorial te guiará paso a paso en el uso del verbo "to be". Aprenderás las reglas básicas y practicarás con ejemplos interactivos.</p>
+                        <div class="tutorial-navigation">
+                            <button class="tutorial-btn" id="prevTutorial" disabled>Anterior</button>
+                            <button class="tutorial-btn" id="nextTutorial">Siguiente</button>
+                        </div>
+                        <div class="tutorial-progress">
+                            <div class="progress-dot active"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                            <div class="progress-dot"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-header">
+                    <button class="help-button" onclick="showHelp()">?</button>
+                    <div class="header-content">
+                        <img src="https://img.freepik.com/vector-gratis/arte-vectorial-robots-estilo-dibujos-animados_78370-4103.jpg?semt=ais_hybrid&w=740&q=80" alt="Robot Icon" class="robot-icon">
+                        <span>LEXTER</span>
+                    </div>
+                </div>
+                
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-value" id="correctCount">0</div>
+                        <div class="stat-label">Correctas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="incorrectCount">0</div>
+                        <div class="stat-label">Incorrectas</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="score">0%</div>
+                        <div class="stat-label">Precisión</div>
+                    </div>
+                </div>
+                
+                <div class="chat-box" id="chatBox">
+                    <div class="message bot">¡Hola! Soy LEXTER, tu asistente para practicar inglés. ¿Cuál es tu nombre?</div>
+                    <div class="suggestion">Puedes escribir "salir" en cualquier momento para terminar la conversación</div>
+                    <div class="suggestion" id="suggestionChips"></div>
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" id="userInput" class="chat-input" placeholder="Escribe un mensaje..." onkeypress="handleKeyPress(event)" maxlength="200">
+                    <button id="sendButton" class="send-button" onclick="sendMessage()">Enviar</button>
+                </div>
+                <div class="privacy-notice">
+                    🔒 Tus conversaciones no se almacenan en ningún servidor. Toda la información permanece en tu dispositivo.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        const chatBox = document.getElementById("chatBox");
+        const userInput = document.getElementById("userInput");
+        const sendButton = document.getElementById("sendButton");
+        const suggestionChips = document.getElementById("suggestionChips");
+        const correctCountElem = document.getElementById("correctCount");
+        const incorrectCountElem = document.getElementById("incorrectCount");
+        const scoreElem = document.getElementById("score");
+        const tutorialToggle = document.getElementById("tutorialToggle");
+        const tutorialOverlay = document.getElementById("tutorialOverlay");
+        const tutorialTitle = document.getElementById("tutorialTitle");
+        const tutorialText = document.getElementById("tutorialText");
+        const prevTutorial = document.getElementById("prevTutorial");
+        const nextTutorial = document.getElementById("nextTutorial");
+        const progressDots = document.querySelectorAll('.progress-dot');
+        
+        let askingName = true;
+        let userName = "";
+        let isActive = true;
+        let conversationHistory = [];
+        let stats = {
+            correct: 0,
+            incorrect: 0,
+            get score() {
+                const total = this.correct + this.incorrect;
+                return total > 0 ? Math.round((this.correct / total) * 100) : 0;
+            }
+        };
+        
+        // Tutorial state
+        let tutorialActive = false;
+        let tutorialStep = 0;
+        const tutorialSteps = [
+            {
+                title: "Bienvenido al Tutorial",
+                text: "Este tutorial te guiará paso a paso en el uso del verbo 'to be'. Aprenderás las reglas básicas y practicarás con ejemplos interactivos."
+            },
+            {
+                title: "Formas del Verbo To Be",
+                text: "El verbo 'to be' cambia según el sujeto: I AM, You ARE, He/She/It IS, We ARE, They ARE. ¡Es la base de todo!"
+            },
+            {
+                title: "Contracciones Comunes",
+                text: "En inglés, usamos contracciones: I'm, You're, He's, She's, It's, We're, They're. Son más naturales en conversaciones."
+            },
+            {
+                title: "Forma Negativa",
+                text: "Para negaciones, añade 'not' después del verbo: I am not, You are not, He is not. O usa contracciones: I'm not, You aren't, He isn't."
+            },
+            {
+                title: "Forma Interrogativa",
+                text: "Para preguntas, invertimos el orden: Am I?, Are you?, Is he?. Recuerda el signo de interrogación al final."
+            },
+            {
+                title: "¡Empecemos!",
+                text: "Ahora practicarás con ejemplos. Escribe oraciones usando el verbo 'to be'. ¡Tú puedes!"
+            }
+        ];
+        
+        // Inicializar el chatbot
+        function init() {
+            showSuggestions(['Di tu nombre para comenzar']);
+            userInput.focus();
+            
+            // Cargar estadísticas desde localStorage
+            const savedStats = localStorage.getItem('chatbotStats');
+            if (savedStats) {
+                const parsedStats = JSON.parse(savedStats);
+                stats.correct = parsedStats.correct || 0;
+                stats.incorrect = parsedStats.incorrect || 0;
+                updateStats();
+            }
+            
+            // Guardar estado en localStorage
+            const savedState = localStorage.getItem('chatbotState');
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                if (state.userName) {
+                    userName = state.userName;
+                    askingName = false;
+                    appendMessage("bot", `¡Bienvenido de nuevo ${userName}! ¿En qué puedo ayudarte hoy?`);
+                    showSentenceSuggestions();
+                }
+            }
+            
+            // Configurar event listeners para el tutorial
+            tutorialToggle.addEventListener('click', startTutorial);
+            prevTutorial.addEventListener('click', prevTutorialStep);
+            nextTutorial.addEventListener('click', nextTutorialStep);
+            
+            // Añadir event listener para limpieza antes de cerrar la página
+            window.addEventListener('beforeunload', cleanUp);
+        }
+        
+        // Funciones del tutorial
+        function startTutorial() {
+            tutorialActive = true;
+            tutorialStep = 0;
+            tutorialOverlay.style.display = 'flex';
+            updateTutorial();
+        }
+        
+        function updateTutorial() {
+            tutorialTitle.textContent = tutorialSteps[tutorialStep].title;
+            tutorialText.textContent = tutorialSteps[tutorialStep].text;
+            
+            // Actualizar botones de navegación
+            prevTutorial.disabled = tutorialStep === 0;
+            nextTutorial.textContent = tutorialStep === tutorialSteps.length - 1 ? 'Comenzar' : 'Siguiente';
+            
+            // Actualizar puntos de progreso
+            progressDots.forEach((dot, index) => {
+                if (index <= tutorialStep) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+        
+        function nextTutorialStep() {
+            if (tutorialStep < tutorialSteps.length - 1) {
+                tutorialStep++;
+                updateTutorial();
+            } else {
+                // Finalizar tutorial
+                tutorialOverlay.style.display = 'none';
+                tutorialActive = false;
+                
+                // Si es un usuario nuevo, iniciar con el tutorial de bienvenida
+                if (askingName) {
+                    appendMessage("bot", "¡Perfecto! Ahora que conoces lo básico, empecemos. ¿Cuál es tu nombre?");
+                } else {
+                    appendMessage("bot", `¡Excelente ${userName}! Ahora practiquemos con algunos ejemplos.`);
+                    showSentenceSuggestions();
+                }
+            }
+        }
+        
+        function prevTutorialStep() {
+            if (tutorialStep > 0) {
+                tutorialStep--;
+                updateTutorial();
+            }
+        }
+        
+        function appendMessage(sender, text, isTutorial = false) {
+            const msg = document.createElement("div");
+            msg.className = "message " + sender;
+            if (isTutorial) {
+                msg.classList.add("tutorial-message");
+            }
+            msg.textContent = text;
+            
+            // Añadir hora del mensaje
+            const time = document.createElement("div");
+            time.className = "message-time";
+            time.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            msg.appendChild(time);
+            
+            chatBox.appendChild(msg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            // Guardar en historial
+            conversationHistory.push({
+                sender: sender,
+                text: text,
+                time: new Date().toISOString(),
+                isTutorial: isTutorial
+            });
+            
+            // Limitar el historial a 100 mensajes para evitar sobrecarga
+            if (conversationHistory.length > 100) {
+                conversationHistory.shift();
+            }
+        }
+        
+        function showSuggestions(suggestions, isTutorial = false) {
+            suggestionChips.innerHTML = '';
+            suggestions.forEach(suggestion => {
+                const chip = document.createElement("span");
+                chip.className = "suggestion-chip";
+                if (isTutorial) {
+                    chip.classList.add("tutorial-chip");
+                }
+                chip.textContent = suggestion;
+                chip.onclick = () => {
+                    userInput.value = suggestion;
+                    sendMessage();
+                };
+                suggestionChips.appendChild(chip);
+            });
+        }
+        
+        function showSentenceSuggestions() {
+            const exampleSentences = [
+                "I am a student.",
+                "You are my friend.",
+                "He is a doctor.",
+                "She is very intelligent.",
+                "It is a beautiful day.",
+                "We are going to the park.",
+                "They are playing soccer.",
+                "I'm happy with my job.",
+                "You're doing great.",
+                "He's working hard.",
+                "Are you ready?",
+                "Is she your sister?",
+                "We are not tired.",
+                "They aren't here.",
+                "I'm not hungry."
+            ];
+            
+            const randomSuggestions = [...exampleSentences]
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3);
+            showSuggestions(randomSuggestions);
+        }
+        
+        function showTypingIndicator() {
+            const typing = document.createElement("div");
+            typing.className = "typing-indicator";
+            typing.id = "typingIndicator";
+            for (let i = 0; i < 3; i++) {
+                const dot = document.createElement("div");
+                dot.className = "typing-dot";
+                typing.appendChild(dot);
+            }
+            chatBox.appendChild(typing);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        
+        function hideTypingIndicator() {
+            const typing = document.getElementById("typingIndicator");
+            if (typing) {
+                chatBox.removeChild(typing);
+            }
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function sendMessage() {
+            if (!isActive) return;
+            
+            const text = userInput.value.trim();
+            
+            if (!text) return;
+            
+            // Sanitizar entrada
+            const sanitizedText = sanitizeInput(text);
+            
+            // Verificar intento de inyección de código
+            if (detectCodeInjection(sanitizedText)) {
+                appendMessage("bot", "❌ He detectado caracteres potencialmente peligrosos en tu mensaje. Por favor, usa solo texto.");
+                userInput.value = "";
+                return;
+            }
+            
+            appendMessage("user", sanitizedText);
+            userInput.value = "";
+            
+            // Verificar si el usuario quiere salir
+            if (text.toLowerCase() === "salir") {
+                handleExit();
+                return;
+            }
+            
+            // Verificar si el usuario pide ayuda
+            if (text.toLowerCase().includes("ayuda") || text.toLowerCase() === "help") {
+                showHelp();
+                return;
+            }
+            
+            // Verificar si el usuario quiere iniciar el tutorial
+            if (text.toLowerCase().includes("tutorial")) {
+                startTutorial();
+                return;
+            }
+            
+            // Deshabilitar entrada mientras se procesa
+            userInput.disabled = true;
+            sendButton.disabled = true;
+            
+            if (askingName) {
+                userName = sanitizedText;
+                showTypingIndicator();
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    appendMessage("bot", `Hola ${userName}. Vamos a practicar el verbo "to be" en inglés.`);
+                    appendMessage("bot", "Escribe oraciones en inglés usando el verbo to be y yo las verificaré.");
+                    
+                    const warning = document.createElement("div");
+                    warning.className = "message warning-message";
+                    warning.textContent = "⚠️ Recuerda: Este chatbot solo verifica oraciones con el verbo to be";
+                    chatBox.appendChild(warning);
+                    
+                    // Añadir mensaje informativo
+                    const info = document.createElement("div");
+                    info.className = "message info-message";
+                    info.textContent = "💡 Escribe 'ayuda' en cualquier momento para obtener guía sobre el verbo to be";
+                    chatBox.appendChild(info);
+                    
+                    showSentenceSuggestions();
+                    
+                    // Guardar en localStorage
+                    localStorage.setItem('chatbotState', JSON.stringify({
+                        userName: userName
+                    }));
+                    
+                    askingName = false;
+                    userInput.disabled = false;
+                    sendButton.disabled = false;
+                    userInput.focus();
+                }, 1000);
+                return;
+            }
+            
+            showTypingIndicator();
+            setTimeout(() => {
+                hideTypingIndicator();
+                validateSentence(sanitizedText);
+                userInput.disabled = false;
+                sendButton.disabled = false;
+                userInput.focus();
+            }, 1000);
+        }
+        
+        function sanitizeInput(input) {
+            // Eliminar etiquetas HTML y scripts potencialmente maliciosos
+            return input.replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                       .replace(/javascript:/gi, "")
+                       .replace(/onerror/gi, "")
+                       .replace(/onload/gi, "")
+                       .substring(0, 200); // Limitar longitud
+        }
+        
+        function detectCodeInjection(input) {
+            // Detectar patrones sospechosos de inyección de código
+            const suspiciousPatterns = [
+                /<script/i,
+                /javascript:/i,
+                /onerror=/i,
+                /onload=/i,
+                /eval\(/i,
+                /alert\(/i,
+                /document\.cookie/i,
+                /window\.location/i,
+                /<\/script>/i
+            ];
+            
+            return suspiciousPatterns.some(pattern => pattern.test(input));
+        }
+        
+        function validateSentence(sentence) {
+            // Lista de pronombres posesivos y personales en inglés
+            const pronouns = "(my|your|his|her|its|our|their|me|you|him|us|them)";
+            const adjectives = "(very|quite|really|extremely|so|too|pretty|fairly)";
+            
+            // Patrones para oraciones en inglés con el verbo to be
+            const patterns = [
+                // Oraciones afirmativas
+                {
+                    pattern: new RegExp(`^(I am|You are|He is|She is|It is|We are|They are) (a|an|the) [a-zA-Z]+( [a-zA-Z]+)*\\.$`),
+                    explanation: "Excelente! Has usado correctamente el verbo 'to be' con un artículo."
+                },
+                {
+                    pattern: new RegExp(`^(I am|You are|He is|She is|It is|We are|They are) [a-zA-Z]+( [a-zA-Z]+)+\\.$`),
+                    explanation: "Muy bien! La estructura de tu oración es correcta."
+                },
+                {
+                    pattern: new RegExp(`^(I am|You are|He is|She is|It is|We are|They are) ${pronouns} [a-zA-Z]+( [a-zA-Z]+)*\\.$`),
+                    explanation: "Perfecto! Has usado correctamente un pronombre posesivo."
+                },
+                {
+                    pattern: new RegExp(`^(I am|You are|He is|She is|It is|We are|They are) ${adjectives} [a-zA-Z]+( [a-zA-Z]+)*\\.$`),
+                    explanation: "Muy bien! Has usado un adverbio para modificar el adjetivo correctamente."
+                },
+                // Contracciones afirmativas
+                {
+                    pattern: new RegExp(`^(I'm|You're|He's|She's|It's|We're|They're) (a|an|the) [a-zA-Z]+( [a-zA-Z]+)*\\.$`),
+                    explanation: "Excelente! Has usado una contracción correctamente."
+                },
+                {
+                    pattern: new RegExp(`^(I'm|You're|He's|She's|It's|We're|They're) [a-zA-Z]+( [a-zA-Z]+)+\\.$`),
+                    explanation: "Muy bien! La contracción está bien utilizada."
+                },
+                {
+                    pattern: new RegExp(`^(I'm|You're|He's|She's|It's|We're|They're) ${pronouns} [a-zA-Z]+( [a-zA-Z]+)*\\.$`),
+                    explanation: "Perfecto! Has combinado una contracción con un pronombre posesivo."
+                },
+                // Oraciones negativas
+                {
+                    pattern: new RegExp(`^(I am not|You are not|He is not|She is not|It is not|We are not|They are not) (a|an|the) [a-zA-Z]+( [a-zA-Z]+)*\\.$`),
+                    explanation: "Excelente! Has formado correctamente una oración negativa."
+                },
+                {
+                    pattern: new RegExp(`^(I am not|You are not|He is not|She is not|It is not|We are not|They are not) [a-zA-Z]+( [a-zA-Z]+)+\\.$`),
+                    explanation: "Muy bien! La negación está bien estructurada."
+                },
+                {
+                    pattern: new RegExp(`^(I am not|You are not|He is not|She is not|It is not|We are not|They are not) ${pronouns} [a-zA-Z]+( [a-zA-Z]+)*\\.$`),
+                    explanation: "Perfecto! Has usado correctamente la forma negativa con un pronombre."
+                },
+                // Contracciones negativas
+                {
+                    pattern: new RegExp(`^(I'm not|You aren't|He isn't|She isn't|It isn't|We aren't|They aren't) (a|an|the) [a-zA-Z]+( [a-zA-Z]+)*\\.$`),
+                    explanation: "Excelente! Has usado una contracción negativa correctamente."
+                },
+                {
+                    pattern: new RegExp(`^(I'm not|You aren't|He isn't|She isn't|It isn't|We aren't|They aren't) [a-zA-Z]+( [a-zA-Z]+)+\\.$`),
+                    explanation: "Muy bien! La contracción negativa está bien utilizada."
+                },
+                {
+                    pattern: new RegExp(`^(I'm not|You aren't|He isn't|She isn't|It isn't|We aren't|They aren't) ${pronouns} [a-zA-Z]+( [a-zA-Z]+)*\\.$`),
+                    explanation: "Perfecto! Has combinado una contracción negativa con un pronombre."
+                },
+                // Preguntas
+                {
+                    pattern: new RegExp(`^(Am I|Are you|Is he|Is she|Is it|Are we|Are they) (a|an|the) [a-zA-Z]+( [a-zA-Z]+)*\\?$`),
+                    explanation: "Excelente! Has formado correctamente una pregunta."
+                },
+                {
+                    pattern: new RegExp(`^(Am I|Are you|Is he|Is she|Is it|Are we|Are they) [a-zA-Z]+( [a-zA-Z]+)*\\?$`),
+                    explanation: "Muy bien! La pregunta está bien estructurada."
+                },
+                {
+                    pattern: new RegExp(`^(Am I|Are you|Is he|Is she|Is it|Are we|Are they) ${pronouns} [a-zA-Z]+( [a-zA-Z]+)*\\?$`),
+                    explanation: "Perfecto! Has formado una pregunta con un pronombre posesivo."
+                },
+                // Tiempo pasado
+                {
+                    pattern: new RegExp(`^(I was|He was|She was|It was|You were|We were|They were) (a|an|the) [a-zA-Z]+( [a-zA-Z]+)*\\.$`),
+                    explanation: "Excelente! Has usado correctamente el pasado del verbo 'to be'."
+                },
+                {
+                    pattern: new RegExp(`^(I was|He was|She was|It was|You were|We were|They were) [a-zA-Z]+( [a-zA-Z]+)+\\.$`),
+                    explanation: "Muy bien! El pasado del verbo está bien utilizado."
+                },
+                {
+                    pattern: new RegExp(`^(I was|He was|She was|It was|You were|We were|They were) ${pronouns} [a-zA-Z]+( [a-zA-Z]+)*\\.$`),
+                    explanation: "Perfecto! Has usado el pasado con un pronombre posesivo."
+                }
+            ];
+            
+            let isValid = false;
+            let explanation = "";
+            
+            for (const {pattern, explanation: exp} of patterns) {
+                if (pattern.test(sentence)) {
+                    isValid = true;
+                    explanation = exp;
+                    break;
+                }
+            }
+            
+            if (isValid) {
+                stats.correct++;
+                appendMessage("bot", "✅ " + explanation);
+                showSentenceSuggestions();
+            } else {
+                stats.incorrect++;
+                appendMessage("bot", "❌ La estructura no es correcta. " + getUserFriendlyError(sentence));
+                appendMessage("bot", "💡 Ejemplo: 'I am a student', 'She is my friend', 'They are happy'");
+                
+                // Añadir botón de ayuda específico
+                const hintButton = document.createElement("button");
+                hintButton.className = "hint-button";
+                hintButton.textContent = "¿Necesitas ayuda con la estructura?";
+                hintButton.onclick = showHelp;
+                chatBox.appendChild(hintButton);
+                
+                showSentenceSuggestions();
+            }
+            
+            updateStats();
+            saveStats();
+        }
+        
+        function getUserFriendlyError(sentence) {
+            // Detectar errores comunes y proporcionar retroalimentación específica
+            if (!sentence.endsWith('.') && !sentence.endsWith('?')) {
+                return "Recuerda terminar la oración con un punto (.) o signo de interrogación (?)";
+            }
+            
+            if (sentence.includes("is") && sentence.includes("I")) {
+                return "Recuerda: con 'I' se usa 'am', no 'is'";
+            }
+            
+            if (sentence.includes("are") && (sentence.includes("he") || sentence.includes("she") || sentence.includes("it"))) {
+                return "Recuerda: con 'he', 'she' o 'it' se usa 'is', no 'are'";
+            }
+            
+            if (sentence.includes("am") && (sentence.includes("you") || sentence.includes("they") || sentence.includes("we"))) {
+                return "Recuerda: con 'you', 'they' o 'we' se usa 'are', no 'am'";
+            }
+            
+            if ((sentence.toLowerCase().includes("a") || sentence.toLowerCase().includes("an")) && 
+                sentence.split(" ").filter(word => word.length > 0).length < 4) {
+                return "Parece que falta un sustantivo después del artículo";
+            }
+            
+            return "Revisa la estructura sujeto + verbo + complemento";
+        }
+        
+        function updateStats() {
+            correctCountElem.textContent = stats.correct;
+            incorrectCountElem.textContent = stats.incorrect;
+            scoreElem.textContent = `${stats.score}%`;
+        }
+        
+        function saveStats() {
+            localStorage.setItem('chatbotStats', JSON.stringify({
+                correct: stats.correct,
+                incorrect: stats.incorrect
+            }));
+        }
+        
+        function showHelp() {
+            appendMessage("bot", "📚 ¿Necesitas ayuda con el verbo 'to be'? Revisa la guía a la izquierda para ver ejemplos y explicaciones.");
+            appendMessage("bot", "💡 Algunas reglas importantes:");
+            appendMessage("bot", "• I → am");
+            appendMessage("bot", "• You/We/They → are");
+            appendMessage("bot", "• He/She/It → is");
+            appendMessage("bot", "• No olvides los artículos (a/an/the) antes de sustantivos singulares");
+            appendMessage("bot", "• Termina las oraciones con punto (.) o signo de interrogación (?)");
+            
+            // Sugerir iniciar el tutorial
+            const tutorialSuggestion = document.createElement("div");
+            tutorialSuggestion.className = "suggestion";
+            tutorialSuggestion.innerHTML = '¿Quieres un tutorial paso a paso? <span class="suggestion-chip tutorial-chip" onclick="startTutorial()">Iniciar Tutorial</span>';
+            chatBox.appendChild(tutorialSuggestion);
+            
+            // Sugerir ejemplos específicos
+            showSentenceSuggestions();
+        }
+        
+        function handleExit() {
+            isActive = false;
+            appendMessage("bot", "👋 ¡Hasta luego " + userName + ", nos vemos nuevamente!");
+            appendMessage("bot", `📊 Tu progreso: ${stats.correct} correctas, ${stats.incorrect} incorrectas (${stats.score}% de precisión)`);
+            
+            const exitMsg = document.createElement("div");
+            exitMsg.className = "message exit-message";
+            exitMsg.textContent = "Chat finalizado. Recarga la página para comenzar de nuevo.";
+            chatBox.appendChild(exitMsg);
+            
+            // Deshabilitar la entrada
+            userInput.disabled = true;
+            userInput.placeholder = "Chat finalizado";
+            sendButton.disabled = true;
+            
+            // Limpiar localStorage
+            localStorage.removeItem('chatbotState');
+        }
+        
+        function cleanUp() {
+            // Limpiar recursos antes de salir
+            console.log("Limpiando recursos del chatbot...");
+        }
+        
+        // Inicializar el chatbot cuando se carga la página
+        window.onload = init;
+    </script>
+</body>
+</html>
